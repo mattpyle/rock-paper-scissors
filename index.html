@@ -1,102 +1,145 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Rock, Paper, Scissors</title>
-</head>
-<body>
-  <script>
-    // Your JavaScript goes here!
-    console.log("Rock, Paper, Scissors game!")
+    <head>
+        <title>Rock, Paper, Scissors</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="title">
+                <h1>Rock, Paper, Scissors</h1>
+            </div>
+            <div class="game-text">
+                <p id="game-paragraph">Start the game!</p>
+            </div>
+            <input type="button" name="Play Again" value="Play Again" id="reset-game" class="hidden"></input>
+            <div id="buttons" class="visible">
+                <div class="rock-button">
+                    <input type="button" name="rock" value="Rock" id="rock-button"></input>
+                </div>
+                <div class="paper-button">
+                    <input type="button" name="paper" value="Paper" id="paper-button"></input>
+                </div>
+                <div class="sicssors-button">
+                    <input type="button" name="scissors" value="Scissors" id="scissors-button"></input>
+                </div>
+            </div>
+        </div>
+        <script>
 
-    let selectionOptions = [
-        'rock',
-        'paper',
-        'scissors'
-    ];
+            let selectionOptions = [
+                'rock',
+                'paper',
+                'scissors'
+            ];
 
-    let playerScore = 0;
-    let computerScore = 0;
-    function computerPlay() {
-        return selectionOptions[Math.floor(Math.random() * selectionOptions.length)];
-    }
-
-    let computerSelection = computerPlay();
-
-    function playRound(playerSelection, computerSelection) {
-        playerSelection = playerSelection.toLowerCase();
-        computerSelection = computerSelection.toLowerCase();
-        let outcome;
-        
-        if (playerSelection === computerSelection) {
-            outcome = "It's a draw!";
-        }
-        else if (playerSelection === "rock") {
-            switch(computerSelection) {
-                case "paper":
-                    outcome = "You lose!";
-                    ++computerScore;
-                    break;
-                case "scissors":
-                    outcome = "You win!";
-                    ++playerScore;
-                    break;
+            let playerScore = 0;
+            let computerScore = 0;
+            // random selection for the computer's choice
+            function computerPlay() {
+                return selectionOptions[Math.floor(Math.random() * selectionOptions.length)];
             }
-        }
-        else if (playerSelection === "paper") {
-            switch(computerSelection) {
-                case "rock":
-                    outcome = "You win!";
-                    ++playerScore;
-                    break;
-                case "scissors":
-                    outcome = "You lose";
-                    ++computerScore;
-                    break;
+
+            let computerSelection = computerPlay();
+            // variables for dom manipulation - buttons and paragraph text
+            var resetButton = document.getElementById("reset-game");
+            var playButtons = document.getElementById("buttons");
+            var gameParagraph = document.getElementById("game-paragraph");
+
+            // play a round of rock, paper, scissors on button click
+            function playRound(playerSelection, computerSelection) {
+                playerSelection = playerSelection.toLowerCase();
+                computerSelection = computerSelection.toLowerCase();
+                let outcome;
+                
+                if (playerSelection === computerSelection) {
+                    outcome = "It's a draw!";
+                }
+                else if (playerSelection === "rock") {
+                    switch(computerSelection) {
+                        case "paper":
+                            outcome = "You lose!";
+                            ++computerScore;
+                            break;
+                        case "scissors":
+                            outcome = "You win!";
+                            ++playerScore;
+                            break;
+                    }
+                }
+                else if (playerSelection === "paper") {
+                    switch(computerSelection) {
+                        case "rock":
+                            outcome = "You win!";
+                            ++playerScore;
+                            break;
+                        case "scissors":
+                            outcome = "You lose";
+                            ++computerScore;
+                            break;
+                    }
+                }
+                else if (playerSelection === "scissors") {
+                    switch(computerSelection) {
+                        case "rock":
+                            outcome = "You lose!";
+                            ++computerScore;
+                            break;
+                        case "paper":
+                            outcome = "You win!";
+                            ++playerScore;
+                            break;
+                    }
+                }
+
+                return "You selected " + playerSelection + " and the computer selected " +
+                        computerSelection + ". " + outcome + " Your score is " + 
+                                playerScore + " and the computer's score is " + computerScore;
             }
-        }
-        else if (playerSelection === "scissors") {
-            switch(computerSelection) {
-                case "rock":
-                    outcome = "You lose!";
-                    ++computerScore;
-                    break;
-                case "paper":
-                    outcome = "You win!";
-                    ++playerScore;
-                    break;
+
+            // want to refactor later but play a round when the choice button is clicked
+            document.getElementById("rock-button").addEventListener("click", function() {
+                gameParagraph.innerHTML = playRound("rock",computerPlay());
+                checkIfPlayerHasWon();
+            });
+
+            document.getElementById("paper-button").addEventListener("click", function() {
+                gameParagraph.innerHTML = playRound("paper",computerPlay());
+                checkIfPlayerHasWon();
+            });
+
+            document.getElementById("scissors-button").addEventListener("click", function() {
+                gameParagraph.innerHTML = playRound("scissors",computerPlay());
+                checkIfPlayerHasWon();
+            });
+
+            // check if the game is over, set the text and hide/show relevant buttons
+            function checkIfPlayerHasWon() {
+                if (playerScore === 5 || computerScore === 5) {
+                    resetButton.classList.remove("hidden");
+                    resetButton.classList.add("visible");
+                    playButtons.classList.add("hidden");
+                    playButtons.classList.remove("visible");
+                }
+                if (playerScore === 5) {
+                    gameParagraph.innerHTML = "You win! 5 to " + computerScore;
+                }
+                if (computerScore === 5) {
+                    gameParagraph.innerHTML = "You lose! " + playerScore + " to 5";
+                }
+                
             }
-        }
+            // when the reset button is clicked, reset the scores and hide/show relevant buttons
+            resetButton.addEventListener("click", function (){
+                playerScore = 0;
+                computerScore = 0;
+                resetButton.classList.add("hidden");
+                resetButton.classList.remove("visible");
+                playButtons.classList.add("visible");
+                playButtons.classList.remove("hidden");
+                gameParagraph.innerHTML = "Choose a selection";
 
-        return "You selected " + playerSelection + " and the computer selected " +
-                 computerSelection + ". " + outcome + " Your score is " + 
-                        playerScore + " and the computer's score is " + computerScore;
-        
-    
-    }
-
-    function game() {
-        for(let i = 1; i <= 5; i++) {
-            playerSelection = prompt("Choose rock, paper or scissors");
-            computerSelection = computerPlay();
-            console.log(playRound(playerSelection, computerSelection));
-            console.log("Round " + i + " over");
-        }
-        console.log("After 5 rounds - " + checkResults());
-    }
-
-    function checkResults() {
-        if (playerScore === computerScore) {
-            return "You drew!";
-        } else if (playerScore > computerScore) {
-            return "You win!";
-        } else {
-            return "You lose!";
-        }
-    }
-
-    game();
-    
-
-  </script>
-</body>
+            });
+        </script>
+    </body>
 </html>
